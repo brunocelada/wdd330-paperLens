@@ -117,7 +117,9 @@ export default class ExternalServices {
     }
 
     async getPaperById(id) {
-        const cleanId = id.replace("https://openalex.org/", "");
+        const cleanId = id
+            ? id.replace("https://openalex.org/", "")
+            : "";
         const response = await fetch(`${baseOpenAlexURL}/works/${cleanId}`);
         const data = await convertToJson(response);
         // console.log(data);

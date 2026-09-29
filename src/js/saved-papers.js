@@ -1,4 +1,9 @@
-import { loadHeaderFooter, getLocalStorage, setLocalStorage, qs } from "./utils";
+import {
+  loadHeaderFooter,
+  getLocalStorage,
+  setLocalStorage,
+  qs,
+} from "./utils";
 import { updatePaperCount } from "./savedPaperCount.mjs";
 
 async function renderSavedPapers() {
@@ -8,7 +13,7 @@ async function renderSavedPapers() {
   listUl.innerHTML = "";
 
   if (!savedPapers || savedPapers.length === 0) {
-    const li = document.createElement("li")
+    const li = document.createElement("li");
     li.innerText = "The list of saved papers is empty.";
     listUl.appendChild(li);
     return;
@@ -22,12 +27,13 @@ async function renderSavedPapers() {
 }
 
 function savedPaperTemplate(paper) {
+  const doi = paper.doi ? paper.doi.replace("https://doi.org/", "") : "No DOI";
   const newPaper = `
   <li class="paper-card">
     <a href="/paper_details/?work=${paper.id.replace("https://openalex.org/", "")}">
             <div>
               <p class="paper-card-name">${paper.title}</p>
-              <p class="paper-card-details">${paper.doi.replace("https://doi.org/", "")} · ${paper.year} · ${paper.authors[0]} (${paper.authors.length} authors)</p>
+              <p class="paper-card-details">${doi} · ${paper.year} · ${paper.authors[0]} (${paper.authors.length} authors)</p>
             </div>
     </a>
     <button class="details-item" data-id="${paper.id}">Open</button>
@@ -60,16 +66,17 @@ async function addOpenRemoveListeners() {
   const openItems = document.querySelectorAll(".details-item");
   openItems.forEach((paper) => {
     paper.addEventListener("click", (event) => {
-      const id = event.target.dataset.id.replace("https://openalex.org/", "");
-      window.location.href = `/paper_details/?work=${id}`
+      const cleanId = event.target.dataset.id
+        ? event.target.dataset.id.replace("https://openalex.org/", "")
+        : "";
+      window.location.href = `/paper_details/?work=${cleanId}`;
     });
   });
 }
 
-
 async function init() {
   await loadHeaderFooter();
-  renderSavedPapers();
+  await renderSavedPapers();
 }
 
 init();

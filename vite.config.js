@@ -12,6 +12,7 @@ export default defineConfig({
         paper_details: resolve(__dirname, "src/paper_details/index.html"),
         saved_papers: resolve(__dirname, "src/saved_papers/index.html"),
         search_results: resolve(__dirname, "src/search_results/index.html"),
+        history: resolve(__dirname, "src/history/index.html"),
       },
     },
   },

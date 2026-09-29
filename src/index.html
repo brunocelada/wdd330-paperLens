@@ -1,48 +1,52 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PaperLens | Home</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+    <script type="module" src="js/main.js"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PaperLens | Home</title>
-  <link rel="stylesheet" href="/css/styles.css" />
-  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
-  <script type="module" src="js/main.js"></script>
-</head>
+  <body>
+    <header class="divider" id="main-header"></header>
 
-<body>
-  <header class="divider" id="main-header"></header>
+    <main>
+      <h1>Scientific literature. Simplified.</h1>
+      <h4>Search papers, filter the results and read only what you need.</h4>
 
-  <main>
-    <h1>Scientific literature. Simplified.</h1>
-    <h4>Search papers, filter the results and read only what you need.</h4>
+      <section class="search-section">
+        <div class="search-bar">
+          <input
+            type="text"
+            placeholder="title, DOI, author, keyword..."
+            id="search-field"
+            name="search-field"
+          />
+          <button type="submit" id="searchSubmit">🔎</button>
+        </div>
+        <!-- <button type="submit" id="searchSubmit">Search</button> -->
+      </section>
 
-    <section class="search-section">
-      <div class="search-bar">
-        <input type="text" placeholder="title, DOI, author, keyword..." id="search-field" name="search-field">
-        <button type="submit" id="searchSubmit">🔎</button>
-      </div>
-      <!-- <button type="submit" id="searchSubmit">Search</button> -->
-    </section>
+      <section class="quick-topics">
+        <h3>Quick topics</h3>
+        <div class="fast-topics">
+          <a href="/search_results/index.html?q=chemistry">Chemistry</a>
+          <a href="/search_results/index.html?q=biology">Biology</a>
+          <a href="/search_results/index.html?q=physics">Physics</a>
+          <a href="/search_results/index.html?q=machine+learning"
+            >Machine Learning</a
+          >
+        </div>
+      </section>
 
-    <section class="quick-topics">
-      <h3>Quick topics</h3>
-      <div class="fast-topics">
-        <a href="/search_results/index.html?q=chemistry">Chemistry</a>
-        <a href="/search_results/index.html?q=biology">Biology</a>
-        <a href="/search_results/index.html?q=physics">Physics</a>
-        <a href="/search_results/index.html?q=machine+learning">Machine Learning</a>
-      </div>
-    </section>
+      <section class="last-search">
+        <h3>Last Searchs</h3>
+        <a href="/history/index.html">See history</a>
+      </section>
+    </main>
 
-    <section class="last-search">
-      <h3>Last Searchs</h3>
-      <a href="/history/index.html">See history</a>
-    </section>
-
-  </main>
-
-  <footer id="main-footer"></footer>
-</body>
-
+    <footer id="main-footer"></footer>
+  </body>
 </html>

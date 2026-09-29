@@ -7,7 +7,7 @@ const paperId = params.get("work");
 
 const services = new ExternalServices();
 
-const paperDetails = new PaperDetails(paperId, services,);
+const paperDetails = new PaperDetails(paperId, services);
 
 async function init() {
   await loadHeaderFooter();

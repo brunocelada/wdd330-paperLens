@@ -249,7 +249,9 @@ main {
 }
 
 /* SAVED PAPERS SECTIONS */
-.results-section {
+/* HISTORY SECTIONS */
+.results-section,
+.history-section {
   width: 100%;
 }
 .list-papers-cards {
@@ -308,6 +310,28 @@ main {
         opacity: 0.8;
       }
     }
+  }
+}
+.history-section {
+  justify-items: center;
+}
+#clean-history {
+  background: var(--secondary-color);
+  color: white;
+  font-family: var(--font-headline);
+  padding: 0.5rem;
+  margin: 0.5rem;
+  width: 100%;
+  max-width: 200px;
+  font-weight: 500;
+  font-size: 1.2rem;
+  height: 3rem;
+  cursor: pointer;
+  border: 1px solid var(--text-color);
+  border-radius: 12px;
+  transition: opacity 0.2s ease-in-out;
+  &:hover {
+    opacity: 0.8;
   }
 }
 

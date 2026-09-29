@@ -14,6 +14,7 @@ export default class PaperDetails {
         this.renderPaperDetails();
         this.setupEventListeners();
         this.isSaved();
+        this.addToHistory();
     }
 
     renderPaperDetails() {
@@ -41,6 +42,27 @@ export default class PaperDetails {
                 "click",
                 this.copyDOI.bind(this),
             );
+    }
+
+    addToHistory() {
+        let historyPapers = getLocalStorage("paperlens-history") || [];
+        // Remove the paper if it already exists in History
+        historyPapers = historyPapers.filter((paper) => paper.id !== this.paper.id,);
+
+        const paperToHistory = {
+            id: this.paper.id,
+            doi: this.paper.doi,
+            title: this.paper.display_name,
+            year: this.paper.publication_year,
+            authors: this.paper.authorships?.map(
+                (authorship) => authorship.author.display_name,
+            ) || [],
+        };
+        historyPapers.push(paperToHistory);
+        if (historyPapers.length > 25) {
+            historyPapers.shift();
+        }
+        setLocalStorage("paperlens-history", historyPapers);
     }
 
     toggleMoreDetails() {
@@ -73,7 +95,7 @@ export default class PaperDetails {
             ) || [],
         };
         savedPapers.push(paperToSave);
-        setLocalStorage("paperlens-saved", savedPapers,);
+        setLocalStorage("paperlens-saved", savedPapers);
         updatePaperCount();
         qs("#save-paper-button").textContent = "Saved";
         qs("#save-paper-button").style.opacity = 0.6;
@@ -120,7 +142,10 @@ function paperDetailsTemplate(paper) {
     // console.log(paper);
     qs("#paper-title").textContent = paper.display_name || "Untitled paper";
     const doi = qs("#paper-doi");
-    doi.textContent = paper.doi.replace("https://doi.org/", "") || "Not available";
+    const doiMetaData = paper.doi
+        ? paper.doi.replace("https://doi.org/", "")
+        : "Not available";
+    doi.textContent = doiMetaData;
     doi.href = paper.doi || "#";
     doi.target = "_blanc";
     doi.rel = "noopener noreferrer"

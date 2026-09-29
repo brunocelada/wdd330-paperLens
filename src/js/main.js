@@ -1,7 +1,7 @@
 import { loadHeaderFooter, setClick, qs } from "./utils";
 
 function setupHomeSearch() {
-  const searchButton = qs("#searchSubmit")
+  const searchButton = qs("#searchSubmit");
   const searchField = qs("#search-field");
   if (!searchField || !searchButton) return;
 
@@ -25,11 +25,11 @@ function setupHomeSearch() {
       goToSearch();
     }
   });
-};
+}
 
 async function init() {
   await loadHeaderFooter();
   setupHomeSearch();
-};
+}
 
 init();

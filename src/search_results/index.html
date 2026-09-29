@@ -1,76 +1,70 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PaperLens | Search Results</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+    <script type="module" src="../js/search-results.js"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PaperLens | Search Results</title>
-  <link rel="stylesheet" href="/css/styles.css" />
-  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
-  <script type="module" src="../js/search-results.js"></script>
-</head>
+  <body>
+    <header class="divider" id="main-header"></header>
 
-<body>
-  <header class="divider" id="main-header"></header>
+    <main>
+      <h2>Results for: <span id="result-query">result_query</span></h2>
 
-  <main>
-    <h2>Results for: <span id="result-query">result_query</span></h2>
+      <section class="filter-section">
+        <div class="sorting">
+          <label for="sort-filter">⇵ Sort</label>
+          <select name="sort" id="sort-filter">
+            <option value="relevance">Relevance</option>
+            <option value="newest">Newest firts</option>
+            <option value="oldest">Oldest firts</option>
+            <option value="title-az">Title A-Z</option>
+            <option value="title-za">Title Z-A</option>
+            <option value="citations">Most cited</option>
+            <option value="citations-low">Least cited</option>
+          </select>
+        </div>
 
-    <section class="filter-section">
+        <div class="filters">
+          <p>Filters</p>
+          <label for="domain-filter">Domain</label>
+          <select name="domain-filter" id="domain-filter">
+            <option value="">Any topic</option>
+            <option value="1">Life Sciences</option>
+            <option value="2">Social Sciences</option>
+            <option value="3">Physical Sciences</option>
+            <option value="4">Health Sciences</option>
+          </select>
 
-      <div class="sorting">
-        <label for="sort-filter">⇵ Sort</label>
-        <select name="sort" id="sort-filter">
-          <option value="relevance">Relevance</option>
-          <option value="newest">Newest firts</option>
-          <option value="oldest">Oldest firts</option>
-          <option value="title-az">Title A-Z</option>
-          <option value="title-za">Title Z-A</option>
-          <option value="citations">Most cited</option>
-          <option value="citations-low">Least cited</option>
-        </select>
-      </div>
+          <label for="year-filter">Year</label>
+          <select name="year" id="year-filter">
+            <option value="">Any year</option>
+            <option value="2026">2026</option>
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
+          </select>
 
-      <div class="filters">
-        <p>Filters</p>
-        <label for="domain-filter">Domain</label>
-        <select name="domain-filter" id="domain-filter">
-          <option value="">Any topic</option>
-          <option value="1">Life Sciences</option>
-          <option value="2">Social Sciences</option>
-          <option value="3">Physical Sciences</option>
-          <option value="4">Health Sciences</option>
-        </select>
+          <label for="access-filter">Access type</label>
+          <select name="access" id="access-filter">
+            <option value="">Any access</option>
+            <option value="open">Open Access</option>
+            <option value="closed">Private Access</option>
+          </select>
+        </div>
+      </section>
 
-        <label for="year-filter">Year</label>
-        <select name="year" id="year-filter">
-          <option value="">Any year</option>
-          <option value="2026">2026</option>
-          <option value="2025">2025</option>
-          <option value="2024">2024</option>
-        </select>
+      <section class="results-section">
+        <span id="total-results">0 results</span>
+        <div class="list-papers-cards">
+          <ul id="list-results"></ul>
+        </div>
+      </section>
+    </main>
 
-        <label for="access-filter">Access type</label>
-        <select name="access" id="access-filter">
-          <option value="">Any access</option>
-          <option value="open">Open Access</option>
-          <option value="closed">Private Access</option>
-        </select>
-
-      </div>
-
-    </section>
-
-    <section class="results-section">
-      <span id="total-results">0 results</span>
-      <div class="list-papers-cards">
-        <ul id="list-results"></ul>
-      </div>
-    </section>
-
-  </main>
-
-  <footer id="main-footer"></footer>
-</body>
-
+    <footer id="main-footer"></footer>
+  </body>
 </html>

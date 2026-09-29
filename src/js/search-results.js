@@ -5,7 +5,7 @@ import PaperSearchList from "./PaperSearchList.mjs";
 const services = new ExternalServices();
 const paperList = new PaperSearchList("#list-results");
 
-const searchParams = new URLSearchParams(window.location.search,);
+const searchParams = new URLSearchParams(window.location.search);
 
 const state = {
   query: searchParams.get("q") || "",
@@ -73,9 +73,7 @@ function getSortValue() {
       return "cited_by_count:asc";
     case "relevance":
     default:
-      return state.query
-        ? "relevance_score:desc"
-        : "publication_year:desc";
+      return state.query ? "relevance_score:desc" : "publication_year:desc";
   }
 }
 
@@ -100,23 +98,24 @@ async function searchPapers() {
       sort: getSortValue(),
       perPage: 50,
     });
-    paperList.renderResults(data.results,);
+    paperList.renderResults(data.results);
 
     if (totalResults) {
       totalResults.textContent = `${data.meta.count.toLocaleString()} results`;
     }
     updateURL();
-
   } catch (error) {
-    console.error(
-      "Error searching OpenAlex:",
-      error,
-    );
+    // console.error(
+    //   "Error searching OpenAlex:",
+    //   error,
+    // );
     if (error.name === "rateLimitError") {
       if (totalResults) {
         totalResults.textContent = "OpenAlex is temporarily unavailable.";
       }
-      paperList.renderMessage("Too many request. Please wait a moment and try again.");
+      paperList.renderMessage(
+        "Too many request. Please wait a moment and try again.",
+      );
       return;
     }
     // alert("Error searching OpenAlex", error);
@@ -124,13 +123,10 @@ async function searchPapers() {
     if (totalResults) {
       totalResults.textContent = "Unable to load results.";
     }
-    paperList.renderMessage(
-      "Something went wrong while loading the papers.",
-    );
+    paperList.renderMessage("Something went wrong while loading the papers.");
     paperList.renderResults([]);
   }
 }
-
 
 function setupFilters() {
   const domainFilter = qs("#domain-filter");
@@ -141,23 +137,19 @@ function setupFilters() {
   domainFilter?.addEventListener("change", () => {
     state.domain = domainFilter.value;
     searchPapers();
-  },
-  );
+  });
   yearFilter?.addEventListener("change", () => {
     state.year = yearFilter.value;
     searchPapers();
-  },
-  );
+  });
   accessFilter?.addEventListener("change", () => {
     state.access = accessFilter.value;
     searchPapers();
-  },
-  );
+  });
   sortFilter?.addEventListener("change", () => {
     state.sort = sortFilter.value;
     searchPapers();
-  },
-  );
+  });
 }
 
 async function init() {
