@@ -3,6 +3,7 @@ import {
   getLocalStorage,
   setLocalStorage,
   qs,
+  alertMessage,
 } from "./utils";
 import { updatePaperCount } from "./savedPaperCount.mjs";
 
@@ -59,7 +60,7 @@ async function addOpenRemoveListeners() {
       setLocalStorage("paperlens-saved", savedPapers);
       renderSavedPapers();
 
-      alert("Paper removed.");
+      alertMessage("Paper removed.");
     });
   });
   // Open
@@ -68,7 +69,7 @@ async function addOpenRemoveListeners() {
     paper.addEventListener("click", (event) => {
       const cleanId = event.target.dataset.id
         ? event.target.dataset.id.replace("https://openalex.org/", "")
-        : "";
+        : event.target.dataset.id;
       window.location.href = `/paper_details/?work=${cleanId}`;
     });
   });

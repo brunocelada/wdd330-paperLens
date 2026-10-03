@@ -44,3 +44,38 @@ export function setClick(selector, callback) {
   });
   qs(selector).addEventListener("click", callback);
 }
+
+export function alertMessage(message, scroll = true) {
+  const alert = document.createElement("div");
+  alert.classList.add("alert-message");
+  alert.innerHTML = `
+    <span></span>
+    <button type="button" class="alert-close" aria-label="Close alert">
+      &#10006;
+    </button>
+  `;
+  alert.querySelector("span").textContent = message;
+
+  const main = document.querySelector("main");
+  if (!main) {
+    return;
+  }
+  main.prepend(alert);
+
+  const closeAlert = () => {
+    alert.classList.add("alert-hiding");
+    alert.addEventListener(
+      "animationend",
+      () => {
+        alert.remove();
+      },
+      { once: true },
+    );
+  };
+  alert.querySelector(".alert-close").addEventListener("click", closeAlert);
+  setTimeout(closeAlert, 2500);
+
+  if (scroll) {
+    window.scrollTo(0, 0);
+  }
+}

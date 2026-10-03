@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage, qs } from "./utils";
+import { getLocalStorage, setLocalStorage, qs, alertMessage } from "./utils";
 import { reconstructAbstract } from "./ExternalServices.mjs";
 import { updatePaperCount } from "./savedPaperCount.mjs";
 
@@ -82,7 +82,7 @@ export default class PaperDetails {
     savePaper() {
         let savedPapers = getLocalStorage("paperlens-saved") || [];
         if (this.isSaved()) {
-            alert("This paper is already saved.");
+            alertMessage("This paper is already saved.");
             return;
         }
         const paperToSave = {
@@ -100,7 +100,7 @@ export default class PaperDetails {
         qs("#save-paper-button").textContent = "Saved";
         qs("#save-paper-button").style.opacity = 0.6;
 
-        alert("Paper saved.");
+        alertMessage("Paper saved.");
     }
 
     isSaved() {
@@ -122,19 +122,19 @@ export default class PaperDetails {
         event.preventDefault();
         const doi = this.paper.doi;
         if (!doi) {
-            alert("This paper does not have a DOI.");
+            alertMessage("This paper does not have a DOI.");
             return;
         }
         await navigator.clipboard.writeText(doi);
 
-        alert("DOI copied to clipboard.");
+        alertMessage("DOI copied to clipboard.");
     }
 
     async copyCitation() {
         const citation = createCitation(this.paper);
         await navigator.clipboard.writeText(citation);
 
-        alert("Citation copied to clipboard.");
+        alertMessage("Citation copied to clipboard.");
     }
 }
 
@@ -162,6 +162,120 @@ function paperDetailsTemplate(paper) {
     qs("#paper-general-field").textContent = paper.primary_topic.domain.display_name;
     qs("#paper-cited").textContent = paper.cited_by_count ?? 0;
     qs("#paper-cite").textContent = createCitation(paper);
+
+    setupAdditionalDetails(paper.crossref);
+}
+
+function crossrefDetailsTemplate(crossref) {
+    if (!crossref) {
+        return `<p>Additional Crossref information is not available.</p>`;
+    }
+    const journal = crossref["container-title"]?.[0] || "Not available";
+    const issn = crossref.ISSN?.join(", ") || "Not available";
+    const published = crossref.published?.["date-parts"]?.[0];
+    const publishedDate = published
+        ? published.join("-")
+        : "Not available";
+
+    const references = crossref.reference
+        ? crossref.reference.length
+        : "Not available";
+    const authorsWithOrcid = crossref.author?.filter((author) => author.ORCID) || [];
+    const orcids = authorsWithOrcid.length > 0
+        ? authorsWithOrcid
+            .map((author) => `${author.given || ""} ${author.family || ""}:
+                <a href="${author.ORCID}" target="_blank" rel="noopener">${author.ORCID}</a>`,)
+            .join("<br>")
+        : "Not available";
+
+    const funding = crossref.funder?.length > 0
+        ? crossref.funder
+            .map((funder) => funder.name)
+            .join("<br>")
+        : "Not available";
+
+    const licenses = crossref.license?.length > 0
+        ? crossref.license
+            .map((license) => license.URL)
+            .join("<br>")
+        : "Not available";
+
+    return `
+        <dl class="crossref-details-list">
+            <div>
+                <dt>Publisher</dt>
+                <dd>${crossref.publisher || "Not available"}</dd>
+            </div>
+            <div>
+                <dt>Journal</dt>
+                <dd>${journal}</dd>
+            </div>
+            <div>
+                <dt>ISSN</dt>
+                <dd>${issn}</dd>
+            </div>
+            <div>
+                <dt>Volume</dt>
+                <dd>${crossref.volume || "Not available"}</dd>
+            </div>
+            <div>
+                <dt>Issue</dt>
+                <dd>${crossref.issue || "Not available"}</dd>
+            </div>
+            <div>
+                <dt>Pages</dt>
+                <dd>${crossref.page || "Not available"}</dd>
+            </div>
+            <div>
+                <dt>Published</dt>
+                <dd>${publishedDate}</dd>
+            </div>
+            <div>
+                <dt>References</dt>
+                <dd>${references}</dd>
+            </div>
+            <div>
+                <dt>License</dt>
+                <dd>${licenses}</dd>
+            </div>
+            <div>
+                <dt>ORCID</dt>
+                <dd>${orcids}</dd>
+            </div>
+            <div>
+                <dt>Funding</dt>
+                <dd>${funding}</dd>
+            </div>
+        </dl>
+    `;
+}
+
+function setupAdditionalDetails(crossref) {
+    const overlay = qs("#additional-details-overlay");
+    const card = qs("#additional-details-card");
+    const openButton = qs("#additional-details-button");
+    const closeButton = qs("#close-additional-details");
+    const detailsContainer = qs("#crossref-details");
+    if (
+        !overlay ||
+        !card ||
+        !openButton ||
+        !closeButton ||
+        !detailsContainer
+    ) { return; }
+    detailsContainer.innerHTML = crossrefDetailsTemplate(crossref);
+
+    openButton.addEventListener("click", () => {
+        overlay.classList.add("is-open");
+    });
+    closeButton.addEventListener("click", () => {
+        overlay.classList.remove("is-open");
+    });
+    overlay.addEventListener("click", (event) => {
+        if (event.target === overlay) {
+            overlay.classList.remove("is-open");
+        }
+    });
 }
 
 function renderAuthors(paper) {

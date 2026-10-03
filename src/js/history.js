@@ -4,6 +4,7 @@ import {
   setLocalStorage,
   qs,
   setClick,
+  alertMessage,
 } from "./utils";
 
 async function renderHistoryPapers() {
@@ -34,6 +35,7 @@ async function renderHistoryPapers() {
 
 function cleanHistory() {
   setLocalStorage("paperlens-history", []);
+  alertMessage("History cleaned.");
   renderHistoryPapers();
 }
 
@@ -59,7 +61,7 @@ async function addOpenListener() {
     paper.addEventListener("click", (event) => {
       const id = event.target.dataset.id
         ? event.target.dataset.id.replace("https://openalex.org/", "")
-        : "";
+        : event.target.dataset.id;
       window.location.href = `/paper_details/?work=${id}`;
     });
   });

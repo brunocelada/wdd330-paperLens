@@ -1,8 +1,8 @@
 import { loadHeaderFooter, qs } from "./utils";
-import ExternalServices from "./ExternalServices.mjs";
+import ExternalOpenAlexServices from "./ExternalServices.mjs";
 import PaperSearchList from "./PaperSearchList.mjs";
 
-const services = new ExternalServices();
+const services = new ExternalOpenAlexServices();
 const paperList = new PaperSearchList("#list-results");
 
 const searchParams = new URLSearchParams(window.location.search);
@@ -118,7 +118,7 @@ async function searchPapers() {
       );
       return;
     }
-    // alert("Error searching OpenAlex", error);
+    // console.error("Error searching OpenAlex", error);
 
     if (totalResults) {
       totalResults.textContent = "Unable to load results.";

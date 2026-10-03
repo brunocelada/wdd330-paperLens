@@ -11,7 +11,7 @@ export async function convertToJson(res) {
         const reset = res.headers.get("X-RateLimit-Reset");
         throw {
             name: "rateLimitError",
-            message: "OpenAlex rate limit reached.",
+            message: "API rate limit reached.",
             remaining,
             reset,
         };
@@ -28,7 +28,9 @@ async function fetchWithRetry(url, maxRetries = 2) {
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
         const response = await fetch(url);
 
-        if (response.status !== 429) {
+        const retryableStatues = [429, 500, 502, 503, 504];
+
+        if (!retryableStatues.includes(response.status)) {
             return response;
         }
         if (attempt === maxRetries) {
@@ -41,9 +43,7 @@ async function fetchWithRetry(url, maxRetries = 2) {
     }
 }
 
-export default class ExternalServices {
-    constructor() { }
-
+export default class ExternalOpenAlexServices {
     async searchWorks({
         query = "",
         domain = "",
@@ -119,11 +119,24 @@ export default class ExternalServices {
     async getPaperById(id) {
         const cleanId = id
             ? id.replace("https://openalex.org/", "")
-            : "";
-        const response = await fetch(`${baseOpenAlexURL}/works/${cleanId}`);
+            : id;
+        const response = await fetchWithRetry(`${baseOpenAlexURL}/works/${cleanId}`);
         const data = await convertToJson(response);
-        // console.log(data);
-        return data;
+
+        let crossrefPaper = null
+        if (data.doi) {
+            try {
+                crossrefPaper = await getCrossrefWork(data.doi);
+            } catch (error) {
+                console.warn("Crossref unavailable:", error);
+            }
+        }
+        const paper = {
+            ...data,
+            crossref: crossrefPaper,
+        };
+        // console.log(paper);
+        return paper;
     }
 }
 
@@ -139,4 +152,14 @@ export function reconstructAbstract(invertedIndex) {
         });
     });
     return words.join(" ");
+}
+
+export async function getCrossrefWork(doi) {
+    const cleanDOI = doi
+        ? doi.replace("https://doi.org/", "")
+        : doi;
+    const response = await fetchWithRetry(`${baseCrossrefURL}/works/${cleanDOI}`);
+    const data = await convertToJson(response);
+    // console.log(data.message);
+    return data.message;
 }
