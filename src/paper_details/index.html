@@ -1,80 +1,104 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PaperLens | Paper Details</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+    <script type="module" src="../js/paper.js"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PaperLens | Paper Details</title>
-  <link rel="stylesheet" href="/css/styles.css" />
-  <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
-  <script type="module" src="../js/paper.js"></script>
-</head>
+  <body>
+    <header class="divider" id="main-header"></header>
 
-<body>
-  <header class="divider" id="main-header"></header>
+    <main>
+      <h2>Paper details</h2>
 
-  <main>
-    <h2>Paper details</h2>
-
-    <section class="details-section">
-      <div class="paper-details">
-        <h3 id="paper-title">Title of the paper</h3>
-        <p>
-          DOI: <a id="paper-doi" href="" rel="noopener noreferrer" target="_blank">doi_number</a>
-          <button id="copy-link" type="button">
-            <img id="copy-link-img" src="/images/copy-link.png" alt="Copy Link" />
-          </button>
-        </p>
-        <p>Year: <span id="paper-year">year_paper</span></p>
-        <p>Access: <a id="paper-access" href="" rel="noopener noreferrer" target="_blank">access_type</a></p>
-        <p>Abstract: <span id="paper-abstract">description_paper</span></p>
-
-        <button id="more-details">More details</button>
-        <div class="hidden-details" style="display: none">
-          <p>Authors:</p>
-          <ul id="paper-authors">
-            authors_names
-          </ul>
-          <p>Cited count: <span id="paper-cited">x_cited_count</span></p>
+      <section class="details-section">
+        <div class="paper-details">
+          <h3 id="paper-title">Title of the paper</h3>
           <p>
-            General field: <span id="paper-general-field">general_field</span>
-          </p>
-          <p>Topics:</p>
-          <ul id="paper-topics"></ul>
-          <p>Referenced works:</p>
-          <ul id="paper-references">
-            references_from_paper
-          </ul>
-          <p>Cite: <span id="paper-cite">cite_paper</span></p>
-
-          <button id="additional-details-button" type="button">
-            Additional details
-          </button>
-        </div>
-
-        <div id="additional-details-overlay" class="additional-details-overlay">
-          <article id="additional-details-card" class="additional-details-card">
-            <button id="close-additional-details" class="close-additional-details" type="button"
-              aria-label="Close additional details">
-              &#10006;
+            DOI:
+            <a id="paper-doi" href="" rel="noopener noreferrer" target="_blank"
+              >doi_number</a
+            >
+            <button id="copy-link" type="button">
+              <img
+                id="copy-link-img"
+                src="/images/copy-link.png"
+                alt="Copy Link"
+              />
             </button>
-            <div class="additional-details-front">
-              <h2>Additional details</h2>
-              <div id="crossref-details" class="crossref-details"></div>
-            </div>
-          </article>
+          </p>
+          <p>Year: <span id="paper-year">year_paper</span></p>
+          <p>
+            Access:
+            <a
+              id="paper-access"
+              href=""
+              rel="noopener noreferrer"
+              target="_blank"
+              >access_type</a
+            >
+          </p>
+          <p>Abstract: <span id="paper-abstract">description_paper</span></p>
+
+          <button id="more-details">More details</button>
+          <div class="hidden-details" style="display: none">
+            <p>Authors:</p>
+            <ul id="paper-authors">
+              authors_names
+            </ul>
+            <p>Cited count: <span id="paper-cited">x_cited_count</span></p>
+            <p>
+              General field: <span id="paper-general-field">general_field</span>
+            </p>
+            <p>Topics:</p>
+            <ul id="paper-topics"></ul>
+            <p>Referenced works:</p>
+            <ul id="paper-references">
+              references_from_paper
+            </ul>
+            <p>Cite: <span id="paper-cite">cite_paper</span></p>
+
+            <button id="additional-details-button" type="button">
+              Additional details
+            </button>
+          </div>
+
+          <div
+            id="additional-details-overlay"
+            class="additional-details-overlay"
+          >
+            <article
+              id="additional-details-card"
+              class="additional-details-card"
+            >
+              <button
+                id="close-additional-details"
+                class="close-additional-details"
+                type="button"
+                aria-label="Close additional details"
+              >
+                &#10006;
+              </button>
+              <div class="additional-details-front">
+                <h2>Additional details</h2>
+                <div id="crossref-details" class="crossref-details"></div>
+              </div>
+            </article>
+          </div>
         </div>
-      </div>
-      <button id="save-paper-button">
-        <img src="/images/save.png" alt="Save Icon" />Save paper
-      </button>
-      <button id="cite-paper-button">
-        <img src="/images/cite.png" alt="Cite Icon" />Cite this paper
-      </button>
-    </section>
-  </main>
+        <button id="save-paper-button">
+          <img src="/images/save.png" alt="Save Icon" />Save paper
+        </button>
+        <button id="cite-paper-button">
+          <img src="/images/cite.png" alt="Cite Icon" />Cite this paper
+        </button>
+      </section>
+    </main>
 
-  <footer id="main-footer"></footer>
-</body>
-
+    <footer id="main-footer"></footer>
+  </body>
 </html>

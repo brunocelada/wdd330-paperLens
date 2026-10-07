@@ -118,9 +118,7 @@ async function searchPapers() {
       totalResults.textContent = `${data.meta.count.toLocaleString()} results`;
     }
     updateURL();
-
   } catch (error) {
-
     if (error.name === "AbortError") {
       return;
     }
