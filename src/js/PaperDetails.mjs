@@ -146,13 +146,18 @@ function paperDetailsTemplate(paper) {
         ? paper.doi.replace("https://doi.org/", "")
         : "Not available";
     doi.textContent = doiMetaData;
-    doi.href = paper.doi || "#";
-    doi.target = "_blanc";
-    doi.rel = "noopener noreferrer"
+    doi.href = paper.doi || "";
     qs("#paper-year").textContent = paper.publication_year || "Unknown";
-    qs("#paper-access").textContent = paper.open_access?.is_oa
+    const paperAccess = qs("#paper-access");
+    paperAccess.textContent = paper.open_access?.is_oa
         ? "Open Access"
         : "Private Access";
+    paperAccess.href = paper.open_access?.is_oa
+        ? paper.best_oa_location.pdf_url || paper.best_oa_location.landing_page_url
+        : paper.doi || "";
+    paperAccess.classList.add(paper.open_access?.is_oa
+        ? "open-access-paper"
+        : "private-access-paper");
     qs("#paper-abstract").textContent = reconstructAbstract(paper.abstract_inverted_index,);
 
     renderAuthors(paper);
@@ -184,7 +189,7 @@ function crossrefDetailsTemplate(crossref) {
     const orcids = authorsWithOrcid.length > 0
         ? authorsWithOrcid
             .map((author) => `${author.given || ""} ${author.family || ""}:
-                <a href="${author.ORCID}" target="_blank" rel="noopener">${author.ORCID}</a>`,)
+                <a href="${author.ORCID}" target="_blank" rel="noopener noreferrer">${author.ORCID}</a>`,)
             .join("<br>")
         : "Not available";
 

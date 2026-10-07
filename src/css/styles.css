@@ -190,13 +190,22 @@ main {
   display: flex;
   max-width: 700px;
   margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid var(--text-transparent-color);
+  border-radius: 8px;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+
+  &:focus-within {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgb(0 0 0 / 10%);
+  }
 
   input {
     flex: 1;
     padding: 1rem 1.2rem;
-    border: 1px solid var(--primary-color);
-    border-right: none;
-    border-radius: 8px 0 0 8px;
+    border: none;
     font-size: 1rem;
     background-color: var(--background-color);
     &:focus {
@@ -210,14 +219,18 @@ main {
   }
   button {
     padding: 0 1.25rem;
-    border: 1px solid var(--primary-color);
-    border-left: none;
+    border: none;
     cursor: pointer;
     border-radius: 0 8px 8px 0;
     background: var(--background-color);
-    transition: background 0.1s ease-in-out;
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease;
     &:hover {
       background: var(--text-transparent-color);
+    }
+    &:active {
+      transform: scale(0.95);
     }
   }
 }
@@ -255,6 +268,7 @@ main {
   width: 100%;
 }
 .list-papers-cards {
+  min-width: 80%;
   ul {
     list-style: none;
     margin: 0;
@@ -469,7 +483,8 @@ main {
   color: var(--primary-color);
   font-weight: 500;
 }
-#paper-doi {
+#paper-doi,
+#paper-access {
   color: var(--primary-color);
   text-decoration: none;
   cursor: pointer;
@@ -477,6 +492,15 @@ main {
     text-decoration: underline;
     color: var(--secondary-color);
   }
+}
+#paper-access {
+  text-decoration: underline;
+}
+#paper-access.open-access-paper {
+  text-decoration-color: rgba(11, 145, 22, 0.3);
+}
+#paper-access.private-access-paper {
+  text-decoration-color: rgba(199, 14, 51, 0.3);
 }
 #copy-link-img {
   width: 20px;
