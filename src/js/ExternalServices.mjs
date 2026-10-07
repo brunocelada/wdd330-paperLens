@@ -24,9 +24,13 @@ export async function convertToJson(res) {
     };
 }
 
-async function fetchWithRetry(url, maxRetries = 2) {
+async function fetchWithRetry(url, signal, maxRetries = 2) {
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
-        const response = await fetch(url);
+        if (signal?.aborted) {
+            throw new DOMException("Request aborted", "AbortError");
+        }
+
+        const response = await fetch(url, { signal, });
 
         const retryableStatues = [429, 500, 502, 503, 504];
 
@@ -37,8 +41,17 @@ async function fetchWithRetry(url, maxRetries = 2) {
             return response;
         }
         const delay = 1000 * 2 ** attempt;
-        await new Promise((resolve) => {
-            setTimeout(resolve, delay);
+
+        await new Promise((resolve, reject) => {
+            const timeout = setTimeout(resolve, delay);
+            signal?.addEventListener("abort", () => {
+                clearTimeout(timeout);
+                reject(new DOMException(
+                    "Request aborted", "AbortError",
+                ));
+            },
+                { once: true },
+            );
         });
     }
 }
@@ -52,8 +65,20 @@ export default class ExternalOpenAlexServices {
         sort = "relevance_score:desc",
         perPage = 50,
         cursor = "*",
+        signal,
     } = {}) {
         const params = new URLSearchParams();
+
+        // Diferent fields to update API speed
+        const SEARCH_WORK_FIELDS = [
+            "id",
+            "display_name",
+            "publication_year",
+            "open_access",
+            "authorships",
+            "primary_topic",
+            "cited_by_count",
+        ].join(",");
 
         // Search
         if (query) {
@@ -88,25 +113,11 @@ export default class ExternalOpenAlexServices {
         params.set("cursor", cursor)
 
         // Fields returned by OpenAlex (only needed)
-        params.set(
-            "select",
-            [
-                "id",
-                "doi",
-                "display_name",
-                "publication_year",
-                "type",
-                "open_access",
-                "authorships",
-                "primary_topic",
-                "cited_by_count",
-                "abstract_inverted_index",
-                "primary_location",
-            ].join(","),
-        );
+        params.set("select", SEARCH_WORK_FIELDS);
 
         const response = await fetchWithRetry(
             `${baseOpenAlexURL}/works?${params.toString()}`,
+            signal,
         );
         const data = await convertToJson(response);
         return {
@@ -117,26 +128,27 @@ export default class ExternalOpenAlexServices {
     }
 
     async getPaperById(id) {
+        const DETAIL_WORK_FIELDS = [
+            "id",
+            "doi",
+            "display_name",
+            "publication_year",
+            "open_access",
+            "best_oa_location",
+            "authorships",
+            "primary_topic",
+            "topics",
+            "cited_by_count",
+            "abstract_inverted_index",
+            "referenced_works",
+        ].join(",");
+
         const cleanId = id
             ? id.replace("https://openalex.org/", "")
             : id;
-        const response = await fetchWithRetry(`${baseOpenAlexURL}/works/${cleanId}`);
+        const response = await fetchWithRetry(`${baseOpenAlexURL}/works/${cleanId}?select=${DETAIL_WORK_FIELDS}`);
         const data = await convertToJson(response);
-
-        let crossrefPaper = null
-        if (data.doi) {
-            try {
-                crossrefPaper = await getCrossrefWork(data.doi);
-            } catch (error) {
-                console.warn("Crossref unavailable:", error);
-            }
-        }
-        const paper = {
-            ...data,
-            crossref: crossrefPaper,
-        };
-        // console.log(paper);
-        return paper;
+        return data;
     }
 }
 

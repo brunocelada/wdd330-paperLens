@@ -5,6 +5,9 @@ import PaperSearchList from "./PaperSearchList.mjs";
 const services = new ExternalOpenAlexServices();
 const paperList = new PaperSearchList("#list-results");
 
+let searchController = null;
+let searchRequestId = 0;
+
 const searchParams = new URLSearchParams(window.location.search);
 
 const state = {
@@ -81,6 +84,12 @@ async function searchPapers() {
   const resultQuery = qs("#result-query");
   const totalResults = qs("#total-results");
 
+  // Cancel the previous search, create a new controller for this
+  // search and give a unique ID.
+  searchController?.abort();
+  searchController = new AbortController();
+  const currentRequestId = ++searchRequestId;
+
   if (resultQuery) {
     resultQuery.textContent = state.query || "All papers";
   }
@@ -97,18 +106,27 @@ async function searchPapers() {
       access: state.access,
       sort: getSortValue(),
       perPage: 50,
+      signal: searchController.signal,
     });
+    if (currentRequestId !== searchRequestId) {
+      return;
+    }
+
     paperList.renderResults(data.results);
 
     if (totalResults) {
       totalResults.textContent = `${data.meta.count.toLocaleString()} results`;
     }
     updateURL();
+
   } catch (error) {
-    // console.error(
-    //   "Error searching OpenAlex:",
-    //   error,
-    // );
+
+    if (error.name === "AbortError") {
+      return;
+    }
+    if (currentRequestId !== searchRequestId) {
+      return;
+    }
     if (error.name === "rateLimitError") {
       if (totalResults) {
         totalResults.textContent = "OpenAlex is temporarily unavailable.";

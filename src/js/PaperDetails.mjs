@@ -1,5 +1,5 @@
 import { getLocalStorage, setLocalStorage, qs, alertMessage } from "./utils";
-import { reconstructAbstract } from "./ExternalServices.mjs";
+import { reconstructAbstract, getCrossrefWork } from "./ExternalServices.mjs";
 import { updatePaperCount } from "./savedPaperCount.mjs";
 
 export default class PaperDetails {
@@ -153,7 +153,10 @@ function paperDetailsTemplate(paper) {
         ? "Open Access"
         : "Private Access";
     paperAccess.href = paper.open_access?.is_oa
-        ? paper.best_oa_location.pdf_url || paper.best_oa_location.landing_page_url
+        ? paper.best_oa_location?.pdf_url ||
+        paper.best_oa_location?.landing_page_url ||
+        paper.doi ||
+        ""
         : paper.doi || "";
     paperAccess.classList.add(paper.open_access?.is_oa
         ? "open-access-paper"
@@ -168,7 +171,7 @@ function paperDetailsTemplate(paper) {
     qs("#paper-cited").textContent = paper.cited_by_count ?? 0;
     qs("#paper-cite").textContent = createCitation(paper);
 
-    setupAdditionalDetails(paper.crossref);
+    setupAdditionalDetails(paper.doi);
 }
 
 function crossrefDetailsTemplate(crossref) {
@@ -255,7 +258,7 @@ function crossrefDetailsTemplate(crossref) {
     `;
 }
 
-function setupAdditionalDetails(crossref) {
+function setupAdditionalDetails(doi) {
     const overlay = qs("#additional-details-overlay");
     const card = qs("#additional-details-card");
     const openButton = qs("#additional-details-button");
@@ -268,11 +271,38 @@ function setupAdditionalDetails(crossref) {
         !closeButton ||
         !detailsContainer
     ) { return; }
-    detailsContainer.innerHTML = crossrefDetailsTemplate(crossref);
 
-    openButton.addEventListener("click", () => {
+    let crossrefLoaded = false;
+    let crossrefLoading = false;
+
+    openButton.addEventListener("click", async () => {
         overlay.classList.add("is-open");
+        if (crossrefLoaded || crossrefLoading) {
+            return;
+        }
+        if (!doi) {
+            detailsContainer.innerHTML =
+                "<p>Additional Crossref information is not available.</p>";
+            crossrefLoaded = true;
+            return;
+        }
+        crossrefLoading = true;
+        detailsContainer.innerHTML =
+            "<p>Loading additional details...</p>";
+
+        try {
+            const crossref = await getCrossrefWork(doi);
+            detailsContainer.innerHTML = crossrefDetailsTemplate(crossref);
+            crossrefLoaded = true;
+        } catch (error) {
+            console.warn("Crossref unavailable:", error);
+            detailsContainer.innerHTML =
+                "<p>Additional Crossref information is not available.</p>";
+        } finally {
+            crossrefLoading = false;
+        }
     });
+
     closeButton.addEventListener("click", () => {
         overlay.classList.remove("is-open");
     });
